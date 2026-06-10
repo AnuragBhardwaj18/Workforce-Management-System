@@ -10,10 +10,10 @@ namespace WMS.Infrastructure.Data
         {
         }
 
-        public DbSet<UserLogin> UserLogins { get; set; }
-
         public DbSet<Role> Roles { get; set; }
         public DbSet<Department> Departments { get; set; }
         public DbSet<Employee> Employees { get; set; }
+        public DbSet<UserLogin> UserLogins { get; set; }
+        public DbSet<Attendance> Attendances { get; set; }
     }
 }
