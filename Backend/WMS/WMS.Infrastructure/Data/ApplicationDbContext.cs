@@ -16,5 +16,8 @@ namespace WMS.Infrastructure.Data
         public DbSet<UserLogin> UserLogins { get; set; }
         public DbSet<Attendance> Attendances { get; set; }
         public DbSet<Leave> Leaves { get; set; }
+        public DbSet<Client> Clients { get; set; }
+        public DbSet<Project> Projects { get; set; }
+        public DbSet<EmployeeProjectAllocation> EmployeeProjectAllocations { get; set; }
     }
 }
