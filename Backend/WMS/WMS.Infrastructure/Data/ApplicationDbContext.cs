@@ -19,5 +19,6 @@ namespace WMS.Infrastructure.Data
         public DbSet<Client> Clients { get; set; }
         public DbSet<Project> Projects { get; set; }
         public DbSet<EmployeeProjectAllocation> EmployeeProjectAllocations { get; set; }
+        public DbSet<Announcement> Announcements { get; set; }
     }
 }
