@@ -20,5 +20,6 @@ namespace WMS.Infrastructure.Data
         public DbSet<Project> Projects { get; set; }
         public DbSet<EmployeeProjectAllocation> EmployeeProjectAllocations { get; set; }
         public DbSet<Announcement> Announcements { get; set; }
+        public DbSet<AuditLog> AuditLogs { get; set; }
     }
 }
