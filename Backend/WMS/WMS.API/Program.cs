@@ -36,10 +36,8 @@ builder.Services.AddAuthentication(options =>
         ValidateAudience = true,
         ValidateLifetime = true,
         ValidateIssuerSigningKey = true,
-
         ValidIssuer = jwtIssuer,
         ValidAudience = jwtAudience,
-
         IssuerSigningKey = new SymmetricSecurityKey(
             Encoding.UTF8.GetBytes(jwtKey!))
     };
@@ -56,7 +54,7 @@ builder.Services.AddCors(options =>
         policy
             .WithOrigins(
                 "http://localhost:4200",
-                "https://wms-api-anurag-bpd8feb0bwg6arfc.centralindia-01.azurewebsites.net"
+                "https://mango-ocean-0c2a51a00.7.azurestaticapps.net"
             )
             .AllowAnyHeader()
             .AllowAnyMethod();
