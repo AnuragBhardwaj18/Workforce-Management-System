@@ -9,7 +9,7 @@ on:
 env:
   AZURE_WEBAPP_NAME: wms-api-anurag
   DOTNET_VERSION: '8.0.x'
-  PROJECT_PATH: Backend/WMS.API/WMS.API.csproj
+  PROJECT_PATH: Backend/WMS/WMS.API/WMS.API.csproj
 
 jobs:
   build:
