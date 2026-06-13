@@ -7,16 +7,16 @@ using WMS.Infrastructure.Data;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container
+// Controllers
 builder.Services.AddControllers();
 
+// Swagger
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
 // Database
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
-    options.UseSqlServer(
-        builder.Configuration.GetConnectionString("DefaultConnection")));
+    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
 // JWT Configuration
 var jwtKey = builder.Configuration["Jwt:Key"];
@@ -53,24 +53,27 @@ builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowAngularApp", policy =>
     {
-        policy.WithOrigins("http://localhost:4200")
-              .AllowAnyHeader()
-              .AllowAnyMethod();
+        policy
+            .WithOrigins(
+                "http://localhost:4200",
+                "https://wms-api-anurag-bpd8feb0bwg6arfc.centralindia-01.azurewebsites.net"
+            )
+            .AllowAnyHeader()
+            .AllowAnyMethod();
     });
 });
 
 var app = builder.Build();
 
 // Swagger
-
-    app.UseSwagger();
-    app.UseSwaggerUI();
-
+app.UseSwagger();
+app.UseSwaggerUI();
 
 // Global Exception Middleware
 app.UseMiddleware<ExceptionMiddleware>();
 
-//app.UseHttpsRedirection();
+// HTTPS
+// app.UseHttpsRedirection();
 
 // CORS
 app.UseCors("AllowAngularApp");
@@ -79,16 +82,19 @@ app.UseCors("AllowAngularApp");
 app.UseAuthentication();
 app.UseAuthorization();
 
-// Seed UserLogins for existing employees without user login records
+// Database Migration + Seed UserLogins
 using (var scope = app.Services.CreateScope())
 {
     try
     {
         var context = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
+
+        context.Database.Migrate();
+
         var employeesWithoutLogin = context.Employees
             .Where(e => !context.UserLogins.Any(u => u.Username == e.Email))
             .ToList();
-        
+
         if (employeesWithoutLogin.Any())
         {
             foreach (var emp in employeesWithoutLogin)
@@ -101,22 +107,26 @@ using (var scope = app.Services.CreateScope())
                     IsPasswordChanged = false
                 });
             }
+
             context.SaveChanges();
         }
 
-        // Reset unchanged passwords to the default Wms@123 to align existing records
-        var unchangedLogins = context.UserLogins.Where(u => !u.IsPasswordChanged).ToList();
+        var unchangedLogins = context.UserLogins
+            .Where(u => !u.IsPasswordChanged)
+            .ToList();
+
         bool updated = false;
+
         foreach (var login in unchangedLogins)
         {
             bool isDefault = false;
+
             try
             {
                 isDefault = BCrypt.Net.BCrypt.Verify("Wms@123", login.PasswordHash);
             }
             catch
             {
-                // Handle invalid hashes
             }
 
             if (!isDefault)
