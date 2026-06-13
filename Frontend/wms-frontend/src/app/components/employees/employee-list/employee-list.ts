@@ -79,8 +79,8 @@ export class EmployeeList implements OnInit {
   getRoleName(id: number): string {
     const roles: Record<number, string> = {
       1: 'Admin',
-      2: 'Employee',
-      3: 'Manager'
+      2: 'Manager',
+      3: 'Employee'
     };
     return roles[id] || `Role ${id}`;
   }
