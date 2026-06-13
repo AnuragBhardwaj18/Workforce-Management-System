@@ -87,7 +87,19 @@ using (var scope = app.Services.CreateScope())
     {
         var context = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
 
+        // Automatically apply database migrations on startup
         context.Database.Migrate();
+
+        // Seed essential Roles if table is empty (required for employee creation)
+        if (!context.Roles.Any())
+        {
+            context.Roles.AddRange(
+                new WMS.Domain.Entities.Role { RoleName = "Admin", Description = "Admin Role" },
+                new WMS.Domain.Entities.Role { RoleName = "Manager", Description = "Manager Role" },
+                new WMS.Domain.Entities.Role { RoleName = "Employee", Description = "Employee Role" }
+            );
+            context.SaveChanges();
+        }
 
         var employeesWithoutLogin = context.Employees
             .Where(e => !context.UserLogins.Any(u => u.Username == e.Email))
