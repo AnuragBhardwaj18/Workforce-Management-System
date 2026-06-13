@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations;
+using WMS.Domain.Common;
 
 namespace WMS.Domain.Entities
 {
@@ -17,7 +18,7 @@ namespace WMS.Domain.Entities
 
         public string? WorkMode { get; set; }
 
-        public DateTime AttendanceDate { get; set; } = DateTime.Now.Date;
+        public DateTime AttendanceDate { get; set; } = DateTimeHelper.Now.Date;
 
         public Employee? Employee { get; set; }
     }

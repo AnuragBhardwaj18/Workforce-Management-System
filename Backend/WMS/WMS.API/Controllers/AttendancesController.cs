@@ -1,6 +1,7 @@
-﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using WMS.Domain.Entities;
+using WMS.Domain.Common;
 using WMS.Infrastructure.Data;
 
 namespace WMS.API.Controllers
@@ -24,7 +25,7 @@ namespace WMS.API.Controllers
             if (employee == null)
                 return NotFound("Employee not found");
 
-            var today = DateTime.Now.Date;
+            var today = DateTimeHelper.Now.Date;
 
             var existingAttendance = await _context.Attendances
                 .FirstOrDefaultAsync(a => a.EmpId == empId && a.AttendanceDate == today);
@@ -35,7 +36,7 @@ namespace WMS.API.Controllers
             var attendance = new Attendance
             {
                 EmpId = empId,
-                CheckIn = DateTime.Now,
+                CheckIn = DateTimeHelper.Now,
                 AttendanceDate = today,
                 WorkMode = workMode
             };
@@ -49,7 +50,7 @@ namespace WMS.API.Controllers
         [HttpPost("check-out")]
         public async Task<IActionResult> CheckOut(int empId)
         {
-            var today = DateTime.Now.Date;
+            var today = DateTimeHelper.Now.Date;
 
             var attendance = await _context.Attendances
                 .FirstOrDefaultAsync(a => a.EmpId == empId && a.AttendanceDate == today);
@@ -60,7 +61,7 @@ namespace WMS.API.Controllers
             if (attendance.CheckOut != null)
                 return BadRequest("Employee already checked out today");
 
-            attendance.CheckOut = DateTime.Now;
+            attendance.CheckOut = DateTimeHelper.Now;
             attendance.TotalHours = Math.Round(
                 (attendance.CheckOut.Value - attendance.CheckIn).TotalHours, 2);
 
