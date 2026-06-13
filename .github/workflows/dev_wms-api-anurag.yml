@@ -47,7 +47,6 @@ jobs:
     needs: build
 
     permissions:
-      id-token: write
       contents: read
 
     steps:
@@ -57,15 +56,9 @@ jobs:
           name: dotnet-app
           path: publish
 
-      - name: Login to Azure
-        uses: azure/login@v2
-        with:
-          client-id: ${{ secrets.AZUREAPPSERVICE_CLIENTID_FDFFB24 }}
-          tenant-id: ${{ secrets.AZUREAPPSERVICE_TENANTID_FDFFB24 }}
-          subscription-id: ${{ secrets.AZUREAPPSERVICE_SUBSCRIPTIONID_FDFFB24 }}
-
       - name: Deploy to Azure Web App
         uses: azure/webapps-deploy@v3
         with:
           app-name: ${{ env.AZURE_WEBAPP_NAME }}
+          publish-profile: ${{ secrets.AZURE_WEBAPP_PUBLISH_PROFILE }}
           package: publish
