@@ -134,6 +134,30 @@ namespace WMS.API.Controllers
             return Ok(new { message = "Password changed successfully" });
         }
 
+        [HttpGet("db-diagnostic")]
+        public async Task<IActionResult> DbDiagnostic()
+        {
+            try
+            {
+                var pending = await _context.Database.GetPendingMigrationsAsync();
+                var applied = await _context.Database.GetAppliedMigrationsAsync();
+                
+                return Ok(new {
+                    message = "Connected to DB successfully!",
+                    pendingMigrations = pending,
+                    appliedMigrations = applied
+                });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new {
+                    message = "DB connection or migration check failed",
+                    error = ex.Message,
+                    stackTrace = ex.StackTrace
+                });
+            }
+        }
+
         private string GenerateJwtToken(UserLogin user)
         {
             var claims = new[]
