@@ -1,6 +1,7 @@
-﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using WMS.Domain.Entities;
+using WMS.Domain.Common;
 using WMS.Infrastructure.Data;
 
 namespace WMS.API.Controllers
@@ -28,7 +29,7 @@ namespace WMS.API.Controllers
                 return BadRequest("FromDate cannot be greater than ToDate");
 
             leave.Status = "Pending";
-            leave.AppliedOn = DateTime.Now;
+            leave.AppliedOn = DateTimeHelper.Now;
 
             _context.Leaves.Add(leave);
             await _context.SaveChangesAsync();
@@ -63,7 +64,7 @@ namespace WMS.API.Controllers
 
             leave.Status = "Approved";
             leave.ApprovedBy = managerId;
-            leave.ApprovedOn = DateTime.Now;
+            leave.ApprovedOn = DateTimeHelper.Now;
 
             await _context.SaveChangesAsync();
 
@@ -80,7 +81,7 @@ namespace WMS.API.Controllers
 
             leave.Status = "Rejected";
             leave.ApprovedBy = managerId;
-            leave.ApprovedOn = DateTime.Now;
+            leave.ApprovedOn = DateTimeHelper.Now;
 
             await _context.SaveChangesAsync();
 

@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations;
+using WMS.Domain.Common;
 
 namespace WMS.Domain.Entities
 {
@@ -13,7 +14,7 @@ namespace WMS.Domain.Entities
 
         public DateTime AssignedOn { get; set; }
 
-        public DateTime CreateDate { get; set; } = DateTime.Now;
+        public DateTime CreateDate { get; set; } = DateTimeHelper.Now;
 
         [Required]
         [MaxLength(50)]

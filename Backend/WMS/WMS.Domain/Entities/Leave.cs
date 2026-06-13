@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations;
+using WMS.Domain.Common;
 
 namespace WMS.Domain.Entities
 {
@@ -23,7 +24,7 @@ namespace WMS.Domain.Entities
         [MaxLength(20)]
         public string Status { get; set; } = "Pending";
 
-        public DateTime AppliedOn { get; set; } = DateTime.Now;
+        public DateTime AppliedOn { get; set; } = DateTimeHelper.Now;
 
         public int? ApprovedBy { get; set; }
 

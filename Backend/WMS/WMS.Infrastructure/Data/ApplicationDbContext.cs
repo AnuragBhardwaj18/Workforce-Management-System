@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using WMS.Domain.Entities;
+using WMS.Domain.Common;
 
 namespace WMS.Infrastructure.Data
 {
@@ -84,7 +85,7 @@ namespace WMS.Infrastructure.Data
                     RecordId = recordId,
                     Action = action,
                     CreatedBy = currentEmployeeId,
-                    CreatedOn = DateTime.Now
+                    CreatedOn = DateTimeHelper.Now
                 };
                 auditEntries.Add((auditLog, entry));
             }

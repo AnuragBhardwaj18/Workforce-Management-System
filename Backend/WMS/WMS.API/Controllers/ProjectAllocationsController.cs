@@ -1,6 +1,7 @@
-﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using WMS.Domain.Entities;
+using WMS.Domain.Common;
 using WMS.Infrastructure.Data;
 
 namespace WMS.API.Controllers
@@ -38,8 +39,8 @@ namespace WMS.API.Controllers
             if (project == null)
                 return NotFound("Project not found");
 
-            allocation.AssignedOn = DateTime.Now;
-            allocation.CreateDate = DateTime.Now;
+            allocation.AssignedOn = DateTimeHelper.Now;
+            allocation.CreateDate = DateTimeHelper.Now;
             allocation.Status = true;
 
             _context.EmployeeProjectAllocations.Add(allocation);
@@ -69,7 +70,7 @@ namespace WMS.API.Controllers
 
             allocation.Status = false;
             allocation.UpdatedBy = updatedBy;
-            allocation.UpdatedDate = DateTime.Now;
+            allocation.UpdatedDate = DateTimeHelper.Now;
 
             await _context.SaveChangesAsync();
 

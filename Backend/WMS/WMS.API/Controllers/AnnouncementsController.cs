@@ -1,6 +1,7 @@
-﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using WMS.Domain.Entities;
+using WMS.Domain.Common;
 using WMS.Infrastructure.Data;
 
 namespace WMS.API.Controllers
@@ -36,7 +37,7 @@ namespace WMS.API.Controllers
         [HttpPost]
         public async Task<IActionResult> AddAnnouncement(Announcement announcement)
         {
-            announcement.CreatedOn = DateTime.Now;
+            announcement.CreatedOn = DateTimeHelper.Now;
             announcement.IsActive = true;
 
             _context.Announcements.Add(announcement);
