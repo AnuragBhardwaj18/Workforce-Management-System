@@ -1,0 +1,132 @@
+/* ===== Navbar ===== */
+.wms-navbar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 64px;
+  background: var(--bg-navbar);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 1.5rem;
+  z-index: 1000;
+  box-shadow: 0 2px 16px rgba(0, 0, 0, 0.2);
+}
+
+/* Brand */
+.navbar-brand-section {
+  display: flex;
+  align-items: center;
+  gap: 0.625rem;
+  text-decoration: none;
+}
+
+.navbar-logo {
+  width: 38px;
+  height: 38px;
+  background: linear-gradient(135deg, #6366f1, #818cf8);
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.2rem;
+  color: white;
+  box-shadow: 0 2px 8px rgba(99, 102, 241, 0.4);
+}
+
+.navbar-brand-text {
+  font-size: 1.25rem;
+  font-weight: 800;
+  color: white;
+  letter-spacing: 1px;
+}
+
+/* Right Section */
+.navbar-right {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.user-info {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.user-avatar {
+  width: 38px;
+  height: 38px;
+  background: linear-gradient(135deg, #6366f1, #818cf8);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: white;
+  letter-spacing: 0.5px;
+  border: 2px solid rgba(255, 255, 255, 0.2);
+}
+
+.user-details {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.15rem;
+}
+
+.user-name {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: white;
+  line-height: 1;
+}
+
+.user-role-badge {
+  font-size: 0.68rem;
+  font-weight: 600;
+  padding: 0.15rem 0.5rem;
+  border-radius: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.user-role-badge.role-admin {
+  background: rgba(99, 102, 241, 0.3);
+  color: #c7d2fe;
+}
+
+.user-role-badge.role-manager {
+  background: rgba(6, 182, 212, 0.25);
+  color: #a5f3fc;
+}
+
+.user-role-badge.role-employee {
+  background: rgba(16, 185, 129, 0.25);
+  color: #a7f3d0;
+}
+
+/* Logout Button */
+.logout-btn {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  background: rgba(255, 255, 255, 0.1);
+  color: rgba(255, 255, 255, 0.85);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: 8px;
+  padding: 0.4rem 0.875rem;
+  font-size: 0.85rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s;
+  font-family: var(--font-family);
+}
+
+.logout-btn:hover {
+  background: rgba(239, 68, 68, 0.2);
+  color: #fca5a5;
+  border-color: rgba(239, 68, 68, 0.3);
+}

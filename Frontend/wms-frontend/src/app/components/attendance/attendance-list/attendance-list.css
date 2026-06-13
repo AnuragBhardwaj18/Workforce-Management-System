@@ -1,0 +1,133 @@
+/* Attendance Action Cards */
+.attendance-action-card {
+  border-radius: 16px;
+  padding: 1.5rem;
+  color: white;
+  height: 100%;
+  min-height: 280px;
+  display: flex;
+  flex-direction: column;
+}
+
+.check-in-card {
+  background: linear-gradient(135deg, #059669, #10b981);
+  box-shadow: 0 4px 20px rgba(16, 185, 129, 0.3);
+}
+
+.check-out-card {
+  background: linear-gradient(135deg, #dc2626, #ef4444);
+  box-shadow: 0 4px 20px rgba(239, 68, 68, 0.3);
+}
+
+.attendance-action-card h5 {
+  color: white;
+  font-size: 1.2rem;
+  margin-bottom: 0.25rem;
+}
+
+.attendance-action-card p {
+  color: rgba(255, 255, 255, 0.7);
+  font-size: 0.85rem;
+  margin-bottom: 0.75rem;
+}
+
+.attendance-action-icon {
+  font-size: 2rem;
+  margin-bottom: 0.75rem;
+  opacity: 0.9;
+}
+
+.attendance-action-card .form-control,
+.attendance-action-card .form-select {
+  background: rgba(255, 255, 255, 0.15);
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  color: white;
+  font-size: 0.875rem;
+}
+
+.attendance-action-card .form-control::placeholder {
+  color: rgba(255, 255, 255, 0.5);
+}
+
+.attendance-action-card .form-control:focus,
+.attendance-action-card .form-select:focus {
+  background: rgba(255, 255, 255, 0.2);
+  border-color: rgba(255, 255, 255, 0.5);
+  box-shadow: none;
+  color: white;
+}
+
+.attendance-action-card .form-select option {
+  background: #1e1b4b;
+  color: white;
+}
+
+.attendance-action-card .btn-light {
+  background: rgba(255, 255, 255, 0.95);
+  color: #1e1b4b;
+  border: none;
+  font-weight: 600;
+}
+
+.attendance-action-card .btn-light:hover {
+  background: white;
+  transform: translateY(-1px);
+}
+
+/* Info Card */
+.attendance-info-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border-color);
+  border-radius: 16px;
+  padding: 1.5rem;
+  height: 100%;
+  min-height: 280px;
+}
+
+.attendance-info-icon {
+  font-size: 1.5rem;
+  color: var(--primary);
+  margin-bottom: 0.75rem;
+}
+
+.attendance-info-card h6 {
+  font-size: 0.9rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin-bottom: 1rem;
+}
+
+.work-mode-item {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.5rem 0;
+  border-bottom: 1px solid var(--border-color);
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+}
+
+.work-mode-item:last-child {
+  border-bottom: none;
+}
+
+.work-mode-badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.25rem 0.6rem;
+  border-radius: 6px;
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+  min-width: 60px;
+  justify-content: center;
+}
+
+.work-mode-badge.wfo,
+.work-mode-badge.wm-wfo { background: var(--primary-ultra-light); color: var(--primary); }
+
+.work-mode-badge.wfh,
+.work-mode-badge.wm-wfh { background: var(--success-light); color: var(--success); }
+
+.work-mode-badge.hybrid,
+.work-mode-badge.wm-hybrid { background: var(--warning-light); color: var(--warning); }

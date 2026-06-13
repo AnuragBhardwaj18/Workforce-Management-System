@@ -1,1 +1,25 @@
-<p>navbar works!</p>
+<nav class="wms-navbar" id="main-navbar">
+  <div class="navbar-brand-section">
+    <div class="navbar-logo">
+      <i class="bi bi-people-fill"></i>
+    </div>
+    <span class="navbar-brand-text">WMS</span>
+  </div>
+
+  <div class="navbar-right">
+    <div class="user-info">
+      <div class="user-avatar">
+        {{ getInitials() }}
+      </div>
+      <div class="user-details d-none d-md-block">
+        <span class="user-name">{{ username }}</span>
+        <span class="user-role-badge" [class]="'role-' + role?.toLowerCase()">{{ role }}</span>
+      </div>
+    </div>
+
+    <button class="logout-btn" (click)="logout()" id="logout-btn" title="Logout">
+      <i class="bi bi-box-arrow-right"></i>
+      <span class="d-none d-md-inline">Logout</span>
+    </button>
+  </div>
+</nav>

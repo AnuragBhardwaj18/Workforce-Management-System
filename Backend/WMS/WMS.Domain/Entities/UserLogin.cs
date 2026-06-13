@@ -1,4 +1,4 @@
-﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations;
 
 namespace WMS.Domain.Entities
 {
@@ -17,6 +17,8 @@ namespace WMS.Domain.Entities
         public int RoleId { get; set; }
 
         public DateTime? LastLogin { get; set; }
+
+        public bool IsPasswordChanged { get; set; } = false;
 
         public Role? Role { get; set; }
     }

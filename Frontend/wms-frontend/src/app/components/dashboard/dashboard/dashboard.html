@@ -1,1 +1,147 @@
-<p>dashboard works!</p>
+<app-navbar></app-navbar>
+<app-sidebar></app-sidebar>
+
+<div class="main-content fade-in">
+  <!-- Page Header -->
+  <div class="page-header">
+    <h1 class="page-title">Dashboard</h1>
+    <p class="page-subtitle">Welcome back, {{ username }}! Here's what's happening today.</p>
+  </div>
+
+  <!-- Stats Grid -->
+  <div class="row g-3 mb-4">
+
+    @if (isAdmin || isManager) {
+      <div class="col-sm-6 col-xl-3">
+        <div class="stat-card">
+          <div class="stat-icon indigo">
+            <i class="bi bi-people-fill"></i>
+          </div>
+          <div>
+            <div class="stat-value">{{ totalEmployees }}</div>
+            <p class="stat-label">{{ isAdmin ? 'Total Employees' : 'Team Members' }}</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-sm-6 col-xl-3">
+        <div class="stat-card">
+          <div class="stat-icon green">
+            <i class="bi bi-person-check-fill"></i>
+          </div>
+          <div>
+            <div class="stat-value">{{ activeEmployees }}</div>
+            <p class="stat-label">{{ isAdmin ? 'Active Employees' : 'Active Teammates' }}</p>
+          </div>
+        </div>
+      </div>
+    }
+
+    <div class="col-sm-6 col-xl-3">
+      <div class="stat-card">
+        <div class="stat-icon cyan">
+          <i class="bi bi-clock-fill"></i>
+        </div>
+        <div>
+          <div class="stat-value">{{ presentToday }}</div>
+          <p class="stat-label">
+            {{ isAdmin ? 'Present Today' : (isManager ? 'Teammates Present Today' : 'Today\'s Attendance') }}
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-sm-6 col-xl-3">
+      <div class="stat-card">
+        <div class="stat-icon amber">
+          <i class="bi bi-calendar2-minus-fill"></i>
+        </div>
+        <div>
+          <div class="stat-value">{{ pendingLeaves }}</div>
+          <p class="stat-label">{{ isAdmin ? 'Pending Leaves' : (isManager ? 'Team Pending Leaves' : 'My Pending Leaves') }}</p>
+        </div>
+      </div>
+    </div>
+
+    @if (isAdmin) {
+      <div class="col-sm-6 col-xl-3">
+        <div class="stat-card">
+          <div class="stat-icon blue">
+            <i class="bi bi-building-fill"></i>
+          </div>
+          <div>
+            <div class="stat-value">{{ totalDepartments }}</div>
+            <p class="stat-label">Departments</p>
+          </div>
+        </div>
+      </div>
+    }
+
+    <div class="col-sm-6 col-xl-3">
+      <div class="stat-card">
+        <div class="stat-icon green">
+          <i class="bi bi-kanban-fill"></i>
+        </div>
+        <div>
+          <div class="stat-value">{{ activeProjects }}</div>
+          <p class="stat-label">{{ isAdmin ? 'Active Projects' : (isManager ? 'Team Active Projects' : 'My Active Projects') }}</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-sm-6 col-xl-3">
+      <div class="stat-card">
+        <div class="stat-icon indigo">
+          <i class="bi bi-folder2-open"></i>
+        </div>
+        <div>
+          <div class="stat-value">{{ totalProjects }}</div>
+          <p class="stat-label">{{ isAdmin ? 'Total Projects' : (isManager ? 'Team Projects' : 'My Projects') }}</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-sm-6 col-xl-3">
+      <div class="stat-card">
+        <div class="stat-icon green">
+          <i class="bi bi-patch-check-fill"></i>
+        </div>
+        <div>
+          <div class="stat-value">{{ approvedLeaves }}</div>
+          <p class="stat-label">{{ isAdmin ? 'Approved Leaves' : (isManager ? 'Team Approved Leaves' : 'My Approved Leaves') }}</p>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- Quick Links -->
+  <div class="row g-3">
+    <div class="col-12">
+      <div class="card p-4">
+        <h5 class="mb-3">
+          <i class="bi bi-lightning-charge-fill text-warning me-2"></i>
+          Quick Actions
+        </h5>
+        <div class="d-flex flex-wrap gap-2">
+          <a routerLink="/attendance" class="btn btn-outline-primary">
+            <i class="bi bi-clock-history"></i> Mark Attendance
+          </a>
+          <a routerLink="/leaves" class="btn btn-outline-primary">
+            <i class="bi bi-calendar2-plus"></i> Apply Leave
+          </a>
+          @if (isAdmin) {
+            <a routerLink="/employees" class="btn btn-outline-primary">
+              <i class="bi bi-person-plus"></i> Add Employee
+            </a>
+          }
+          @if (isAdmin || isManager) {
+            <a routerLink="/reports" class="btn btn-outline-primary">
+              <i class="bi bi-graph-up-arrow"></i> View Reports
+            </a>
+          }
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,107 @@
+<app-navbar></app-navbar>
+<app-sidebar></app-sidebar>
+
+<div class="main-content fade-in">
+  <div class="page-header section-header">
+    <div>
+      <h1 class="page-title">Company Announcements</h1>
+      <p class="page-subtitle">Stay updated with the latest news and policies</p>
+    </div>
+    @if (isAdmin()) {
+      <button class="btn btn-primary" (click)="toggleForm()" id="add-announcement-btn">
+        <i class="bi bi-megaphone-fill"></i> New Announcement
+      </button>
+    }
+  </div>
+
+  @if (isAdmin() && showForm) {
+    <div class="filter-card mb-4">
+      <div class="d-flex align-items-center justify-content-between mb-3">
+        <h5 class="mb-0">
+          <i class="bi bi-{{ isEdit ? 'pencil' : 'megaphone' }} me-2 text-primary"></i>
+          {{ isEdit ? 'Edit Announcement' : 'Create Announcement' }}
+        </h5>
+        <button class="btn btn-secondary btn-sm" (click)="toggleForm()">
+          <i class="bi bi-x-lg"></i> Cancel
+        </button>
+      </div>
+      <div class="row g-3">
+        <div class="col-md-9">
+          <label class="form-label">Title *</label>
+          <input class="form-control" placeholder="Announcement title" [(ngModel)]="announcement.title" id="ann-title">
+        </div>
+        <div class="col-md-3">
+          <label class="form-label">Status</label>
+          <select class="form-select" [(ngModel)]="announcement.isActive" id="ann-status">
+            <option [ngValue]="true">Active</option>
+            <option [ngValue]="false">Inactive</option>
+          </select>
+        </div>
+        <div class="col-12">
+          <label class="form-label">Message *</label>
+          <textarea class="form-control" rows="3" placeholder="Write your announcement message here..." [(ngModel)]="announcement.message" id="ann-msg"></textarea>
+        </div>
+        <div class="col-12 d-flex justify-content-end">
+          <button class="btn btn-primary" (click)="saveAnnouncement()" id="save-ann-btn">
+            <i class="bi bi-send-fill"></i> Publish
+          </button>
+        </div>
+      </div>
+    </div>
+  }
+
+  <div class="row g-4">
+    @if (announcements.length === 0) {
+      <div class="col-12">
+        <div class="text-center py-5 filter-card">
+          <div class="empty-state">
+            <i class="bi bi-megaphone d-block mb-3" style="font-size:3rem; color:#d1d5db;"></i>
+            <h5 class="text-muted">No announcements yet</h5>
+            <p class="text-muted mb-0">Check back later for updates from the company.</p>
+          </div>
+        </div>
+      </div>
+    }
+
+    @for (a of announcements; track a.announcementId) {
+      <div class="col-12">
+        <div class="announcement-card" [class.inactive]="!a.isActive">
+          <div class="ann-header">
+            <div class="d-flex align-items-center gap-3">
+              <div class="ann-icon" [class.bg-secondary]="!a.isActive">
+                <i class="bi bi-megaphone-fill"></i>
+              </div>
+              <div>
+                <h5 class="ann-title mb-1">{{ a.title }}</h5>
+                <p class="ann-meta mb-0 text-muted">
+                  <i class="bi bi-calendar-event me-1"></i>
+                  {{ a.createdOn | date:'mediumDate' }} at {{ a.createdOn | date:'shortTime' }}
+                </p>
+              </div>
+            </div>
+            @if (isAdmin()) {
+              <div class="dropdown" style="position: relative;">
+                <button class="btn btn-light btn-sm rounded-circle" type="button" (click)="toggleDropdown($event, a.announcementId)" [id]="'ann-menu-' + a.announcementId">
+                  <i class="bi bi-three-dots-vertical"></i>
+                </button>
+                @if (activeDropdownId === a.announcementId) {
+                  <ul class="dropdown-menu dropdown-menu-end border-0 shadow-sm show" style="display: block; position: absolute; right: 0; z-index: 1050;">
+                    <li><a class="dropdown-item" href="javascript:void(0)" (click)="editAnnouncement(a)"><i class="bi bi-pencil me-2 text-warning"></i> Edit</a></li>
+                    @if (a.isActive) {
+                      <li><a class="dropdown-item" href="javascript:void(0)" (click)="deactivate(a.announcementId)"><i class="bi bi-eye-slash me-2 text-secondary"></i> Deactivate</a></li>
+                    }
+                    <li><hr class="dropdown-divider"></li>
+                    <li><a class="dropdown-item text-danger" href="javascript:void(0)" (click)="deleteAnnouncement(a.announcementId)"><i class="bi bi-trash me-2"></i> Delete</a></li>
+                  </ul>
+                }
+              </div>
+            }
+          </div>
+          <div class="ann-body mt-3">
+            <p class="mb-0" style="white-space: pre-wrap;">{{ a.message }}</p>
+          </div>
+        </div>
+      </div>
+    }
+  </div>
+</div>

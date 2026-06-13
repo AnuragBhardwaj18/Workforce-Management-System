@@ -1,1 +1,179 @@
-<p>attendance-list works!</p>
+<app-navbar></app-navbar>
+<app-sidebar></app-sidebar>
+
+<div class="main-content fade-in">
+  <!-- Page Header -->
+  <div class="page-header">
+    <h1 class="page-title">Attendance Management</h1>
+    <p class="page-subtitle">Track daily attendance, check-ins, and check-outs</p>
+  </div>
+
+  <!-- Check In / Check Out Panel -->
+  @if (role !== 'Admin') {
+    <div class="row g-3 mb-4">
+      <div class="col-md-4">
+        <div class="attendance-action-card check-in-card">
+          <div class="attendance-action-icon">
+            <i class="bi bi-box-arrow-in-right"></i>
+          </div>
+          <h5>Check In</h5>
+          <p>Record your arrival time</p>
+          <div class="mb-3">
+            <label class="form-label text-white-50">Employee</label>
+            @if (isAdmin) {
+              <select class="form-select form-select-sm" [(ngModel)]="empId" id="attendance-empid">
+                @for (e of employees; track e.employeeId) {
+                  <option [value]="e.employeeId">{{ e.firstName }} {{ e.lastName }} (ID: #{{ e.employeeId }})</option>
+                }
+              </select>
+            } @else {
+              <input type="text" class="form-control form-control-sm" [value]="getEmployeeName(empId)" disabled id="attendance-empid-readonly">
+            }
+          </div>
+          <div class="mb-3">
+            <label class="form-label text-white-50">Work Mode</label>
+            <select class="form-select form-select-sm" [(ngModel)]="workMode" id="attendance-workmode">
+              <option value="WFO">Work From Office (WFO)</option>
+              <option value="WFH">Work From Home (WFH)</option>
+              <option value="Hybrid">Hybrid</option>
+            </select>
+          </div>
+          <button class="btn btn-light w-100 fw-600" (click)="checkIn()" id="checkin-btn">
+            <i class="bi bi-box-arrow-in-right me-1"></i> Check In
+          </button>
+        </div>
+      </div>
+ 
+      <div class="col-md-4">
+        <div class="attendance-action-card check-out-card">
+          <div class="attendance-action-icon">
+            <i class="bi bi-box-arrow-right"></i>
+          </div>
+          <h5>Check Out</h5>
+          <p>Record your departure time</p>
+          <div class="mb-3 mt-4">
+            <label class="form-label text-white-50">Employee</label>
+            @if (isAdmin) {
+              <select class="form-select form-select-sm" [(ngModel)]="empId" id="checkout-empid">
+                @for (e of employees; track e.employeeId) {
+                  <option [value]="e.employeeId">{{ e.firstName }} {{ e.lastName }} (ID: #{{ e.employeeId }})</option>
+                }
+              </select>
+            } @else {
+              <input type="text" class="form-control form-control-sm" [value]="getEmployeeName(empId)" disabled id="checkout-empid-readonly">
+            }
+          </div>
+          <div class="mb-4">
+            <p class="text-white-50 small mb-0">Current time will be recorded as checkout time.</p>
+          </div>
+          <button class="btn btn-light w-100 fw-600" (click)="checkOut()" id="checkout-btn">
+            <i class="bi bi-box-arrow-right me-1"></i> Check Out
+          </button>
+        </div>
+      </div>
+
+      <div class="col-md-4">
+        <div class="attendance-info-card">
+          <div class="attendance-info-icon">
+            <i class="bi bi-info-circle-fill"></i>
+          </div>
+          <h6>Work Modes</h6>
+          <div class="work-mode-item">
+            <span class="work-mode-badge wfo">WFO</span>
+            <span>Work From Office</span>
+          </div>
+          <div class="work-mode-item">
+            <span class="work-mode-badge wfh">WFH</span>
+            <span>Work From Home</span>
+          </div>
+          <div class="work-mode-item">
+            <span class="work-mode-badge hybrid">Hybrid</span>
+            <span>Mix of WFO & WFH</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  }
+
+  <!-- Attendance Records Table -->
+  <div class="table-card">
+    <div class="p-3 border-bottom d-flex align-items-center justify-content-between">
+      <h5 class="mb-0">
+        <i class="bi bi-table me-2 text-primary"></i>
+        Attendance Records
+      </h5>
+      <button class="btn btn-outline-primary btn-sm" (click)="loadAttendance()" id="refresh-attendance-btn">
+        <i class="bi bi-arrow-clockwise"></i> Refresh
+      </button>
+    </div>
+    <div class="table-responsive">
+      <table class="table table-hover mb-0">
+        <thead>
+          <tr>
+            <th>#</th>
+            <th>Employee</th>
+            <th>Date</th>
+            <th>Check In</th>
+            <th>Check Out</th>
+            <th>Total Hours</th>
+            <th>Work Mode</th>
+          </tr>
+        </thead>
+        <tbody>
+          @if (records.length === 0) {
+            <tr>
+              <td colspan="7" class="text-center py-5">
+                <div class="empty-state">
+                  <i class="bi bi-clock d-block mb-2" style="font-size:2.5rem; color:#d1d5db;"></i>
+                  <p class="text-muted">No attendance records found</p>
+                </div>
+              </td>
+            </tr>
+          }
+          @for (a of records; track a.attendanceId; let i = $index) {
+            <tr>
+              <td class="fw-600 text-muted">{{ i + 1 }}</td>
+              <td>
+                <div class="d-flex align-items-center gap-2">
+                  <div class="emp-avatar-sm" style="width:28px; height:28px; border-radius:50%; background:var(--primary-light, #e0e7ff); color:var(--primary); display:flex; align-items:center; justify-content:center; font-size:0.75rem; font-weight:600;">
+                    {{ getEmployeeName(a.empId).substring(0, 2).toUpperCase() }}
+                  </div>
+                  <span class="fw-600">{{ getEmployeeName(a.empId) }} <span class="text-muted small">(ID: #{{ a.empId }})</span></span>
+                </div>
+              </td>
+              <td>{{ a.attendanceDate | date:'mediumDate' }}</td>
+              <td>
+                <span class="text-success fw-500">
+                  <i class="bi bi-arrow-right-circle-fill me-1"></i>
+                  {{ a.checkIn | date:'shortTime' }}
+                </span>
+              </td>
+              <td>
+                @if (a.checkOut) {
+                  <span class="text-danger fw-500">
+                    <i class="bi bi-arrow-left-circle-fill me-1"></i>
+                    {{ a.checkOut | date:'shortTime' }}
+                  </span>
+                } @else {
+                  <span class="badge badge-warning">Active</span>
+                }
+              </td>
+              <td>
+                @if (a.totalHours) {
+                  <span class="fw-600">{{ a.totalHours }} hrs</span>
+                } @else {
+                  <span class="text-muted">—</span>
+                }
+              </td>
+              <td>
+                <span class="badge work-mode-badge" [class]="'wm-' + a.workMode?.toLowerCase()">
+                  {{ a.workMode }}
+                </span>
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>

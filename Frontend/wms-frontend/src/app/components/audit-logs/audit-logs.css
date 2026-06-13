@@ -1,0 +1,8 @@
+.empty-state {
+  padding: 2rem 0;
+  text-align: center;
+}
+
+.emp-avatar-sm {
+  flex-shrink: 0;
+}

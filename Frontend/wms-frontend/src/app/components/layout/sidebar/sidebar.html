@@ -1,1 +1,78 @@
-<p>sidebar works!</p>
+<aside class="wms-sidebar" id="sidebar">
+  <nav class="sidebar-nav">
+
+    <a routerLink="/dashboard" routerLinkActive="active" class="sidebar-link" id="nav-dashboard">
+      <i class="bi bi-speedometer2"></i>
+      <span>Dashboard</span>
+    </a>
+
+    <a routerLink="/profile" routerLinkActive="active" class="sidebar-link" id="nav-profile">
+      <i class="bi bi-person-circle"></i>
+      <span>My Profile</span>
+    </a>
+
+    <a routerLink="/my-team" routerLinkActive="active" class="sidebar-link" id="nav-my-team">
+      <i class="bi bi-people-fill"></i>
+      <span>My Team</span>
+    </a>
+
+    @if (isAdmin()) {
+      <a routerLink="/departments" routerLinkActive="active" class="sidebar-link" id="nav-departments">
+        <i class="bi bi-building"></i>
+        <span>Departments</span>
+      </a>
+    }
+
+    @if (isAdmin()) {
+      <a routerLink="/employees" routerLinkActive="active" class="sidebar-link" id="nav-employees">
+        <i class="bi bi-people"></i>
+        <span>Employees</span>
+      </a>
+    }
+
+    @if (isAdmin()) {
+      <a routerLink="/clients" routerLinkActive="active" class="sidebar-link" id="nav-clients">
+        <i class="bi bi-briefcase"></i>
+        <span>Clients</span>
+      </a>
+    }
+
+    @if (isAdmin()) {
+      <a routerLink="/audit-logs" routerLinkActive="active" class="sidebar-link" id="nav-audit-logs">
+        <i class="bi bi-shield-lock"></i>
+        <span>Audit Logs</span>
+      </a>
+    }
+
+    <a routerLink="/attendance" routerLinkActive="active" class="sidebar-link" id="nav-attendance">
+      <i class="bi bi-clock-history"></i>
+      <span>Attendance</span>
+    </a>
+
+    <a routerLink="/leaves" routerLinkActive="active" class="sidebar-link" id="nav-leaves">
+      <i class="bi bi-calendar2-check"></i>
+      <span>Leaves</span>
+    </a>
+
+    <a routerLink="/announcements" routerLinkActive="active" class="sidebar-link" id="nav-announcements">
+      <i class="bi bi-megaphone"></i>
+      <span>Announcements</span>
+    </a>
+
+    <a routerLink="/projects" routerLinkActive="active" class="sidebar-link" id="nav-projects">
+      <i class="bi bi-kanban"></i>
+      <span>Projects</span>
+    </a>
+
+    @if (isAdmin() || isManager()) {
+      <a routerLink="/reports" routerLinkActive="active" class="sidebar-link" id="nav-reports">
+        <i class="bi bi-graph-up-arrow"></i>
+        <span>Reports</span>
+      </a>
+    }
+  </nav>
+
+  <div class="sidebar-footer">
+    <div class="sidebar-version">WMS v1.0</div>
+  </div>
+</aside>

@@ -1,0 +1,12 @@
+.dept-icon {
+  width: 32px;
+  height: 32px;
+  background: var(--primary-ultra-light);
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--primary);
+  font-size: 0.9rem;
+  flex-shrink: 0;
+}

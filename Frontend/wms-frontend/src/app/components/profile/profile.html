@@ -1,0 +1,159 @@
+<app-navbar></app-navbar>
+<app-sidebar></app-sidebar>
+
+<div class="main-content fade-in">
+  <!-- Page Header -->
+  <div class="page-header section-header">
+    <div>
+      <h1 class="page-title">My Profile</h1>
+      <p class="page-subtitle">View and update your personal and professional profile details</p>
+    </div>
+    @if (!isAdminUser && !isEditing && employee) {
+      <button class="btn btn-primary" (click)="toggleEdit()" id="edit-profile-btn">
+        <i class="bi bi-pencil-square"></i> Edit Profile
+      </button>
+    }
+  </div>
+
+  @if (successMessage) {
+    <div class="alert alert-success alert-dismissible fade show" role="alert">
+      <i class="bi bi-check-circle-fill me-2"></i> {{ successMessage }}
+    </div>
+  }
+
+  @if (errorMessage) {
+    <div class="alert alert-danger alert-dismissible fade show" role="alert">
+      <i class="bi bi-exclamation-triangle-fill me-2"></i> {{ errorMessage }}
+    </div>
+  }
+
+  @if (employee) {
+    <div class="row g-4">
+      <!-- Profile Avatar & Overview Card -->
+      <div class="col-lg-4">
+        <div class="profile-card text-center">
+          <div class="profile-avatar-wrapper">
+            <div class="profile-avatar-large">
+              {{ getInitials() }}
+            </div>
+            <span class="status-indicator" [class]="employee.status === 'Active' ? 'status-active' : 'status-inactive'"></span>
+          </div>
+          
+          <h3 class="profile-name mt-3">{{ employee.firstName }} {{ employee.lastName }}</h3>
+          <p class="profile-email text-muted mb-2">{{ employee.email }}</p>
+          
+          <div class="d-flex flex-wrap justify-content-center gap-2 mt-3">
+            <span class="badge badge-primary">{{ employee.role?.roleName || role }}</span>
+            <span class="badge badge-secondary">{{ employee.department?.departmentName || 'General Staff' }}</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Detailed Information Card -->
+      <div class="col-lg-8">
+        <div class="info-card">
+          <div class="card-header-custom d-flex justify-content-between align-items-center">
+            <h5 class="mb-0">
+              <i class="bi bi-person-lines-fill text-primary me-2"></i>
+              Profile Details
+            </h5>
+            @if (isEditing) {
+              <div class="d-flex gap-2">
+                <button class="btn btn-sm btn-secondary" (click)="toggleEdit()" id="cancel-edit-btn">Cancel</button>
+                <button class="btn btn-sm btn-success" (click)="saveProfile()" id="save-profile-btn">Save Changes</button>
+              </div>
+            }
+          </div>
+
+          <div class="card-body-custom mt-3">
+            @if (!isEditing) {
+              <!-- Display Mode -->
+              <div class="info-grid">
+                <div class="info-item">
+                  <span class="info-label">First Name</span>
+                  <span class="info-value" id="profile-first-name">{{ employee.firstName }}</span>
+                </div>
+                <div class="info-item">
+                  <span class="info-label">Last Name</span>
+                  <span class="info-value" id="profile-last-name">{{ employee.lastName }}</span>
+                </div>
+                <div class="info-item">
+                  <span class="info-label">Email Address</span>
+                  <span class="info-value" id="profile-email">{{ employee.email }}</span>
+                </div>
+                <div class="info-item">
+                  <span class="info-label">Phone Number</span>
+                  <span class="info-value" id="profile-phone">{{ employee.phoneNumber || 'Not provided' }}</span>
+                </div>
+                <div class="info-item">
+                  <span class="info-label">Gender</span>
+                  <span class="info-value" id="profile-gender">
+                    {{ employee.gender === 'M' ? 'Male' : (employee.gender === 'F' ? 'Female' : employee.gender) }}
+                  </span>
+                </div>
+                <div class="info-item">
+                  <span class="info-label">Date of Birth</span>
+                  <span class="info-value" id="profile-dob">{{ employee.dob | date:'longDate' }}</span>
+                </div>
+                <div class="info-item">
+                  <span class="info-label">Date of Joining</span>
+                  <span class="info-value" id="profile-doj">{{ employee.doj | date:'longDate' }}</span>
+                </div>
+                <div class="info-item">
+                  <span class="info-label">Status</span>
+                  <span class="info-value">
+                    <span class="badge" [class]="employee.status === 'Active' ? 'badge-success' : 'badge-danger'">
+                      {{ employee.status }}
+                    </span>
+                  </span>
+                </div>
+              </div>
+            } @else {
+              <!-- Edit Mode -->
+              <div class="row g-3">
+                <div class="col-md-6">
+                  <label class="form-label fw-600">First Name</label>
+                  <input type="text" class="form-control" [value]="employee.firstName" disabled>
+                  <small class="text-muted">Contact HR to change your name.</small>
+                </div>
+                <div class="col-md-6">
+                  <label class="form-label fw-600">Last Name</label>
+                  <input type="text" class="form-control" [value]="employee.lastName" disabled>
+                  <small class="text-muted">Contact HR to change your name.</small>
+                </div>
+                <div class="col-md-6">
+                  <label class="form-label fw-600">Email Address</label>
+                  <input type="email" class="form-control" [value]="employee.email" disabled>
+                  <small class="text-muted">Login email cannot be changed.</small>
+                </div>
+                <div class="col-md-6">
+                  <label class="form-label fw-600">Phone Number *</label>
+                  <input type="text" class="form-control" [(ngModel)]="editModel.phoneNumber" id="edit-phone" placeholder="Enter phone number">
+                </div>
+                <div class="col-md-6">
+                  <label class="form-label fw-600">Gender *</label>
+                  <select class="form-select" [(ngModel)]="editModel.gender" id="edit-gender">
+                    <option value="M">Male</option>
+                    <option value="F">Female</option>
+                    <option value="O">Other</option>
+                  </select>
+                </div>
+                <div class="col-md-6">
+                  <label class="form-label fw-600">Date of Birth *</label>
+                  <input type="date" class="form-control" [(ngModel)]="editModel.dob" id="edit-dob">
+                </div>
+              </div>
+            }
+          </div>
+        </div>
+      </div>
+    </div>
+  } @else {
+    <div class="text-center py-5">
+      <div class="spinner-border text-primary" role="status">
+        <span class="visually-hidden">Loading...</span>
+      </div>
+      <p class="text-muted mt-2">Loading profile details...</p>
+    </div>
+  }
+</div>

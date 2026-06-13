@@ -1,1 +1,201 @@
-<p>employee-list works!</p>
+<app-navbar></app-navbar>
+<app-sidebar></app-sidebar>
+
+<div class="main-content fade-in">
+  <!-- Page Header -->
+  <div class="page-header section-header">
+    <div>
+      <h1 class="page-title">Employee Management</h1>
+      <p class="page-subtitle">Manage your organization's employee records</p>
+    </div>
+    <button class="btn btn-primary" (click)="openForm()" id="add-employee-btn">
+      <i class="bi bi-person-plus-fill"></i> Add Employee
+    </button>
+  </div>
+
+  <!-- Add/Edit Form -->
+  @if (showForm) {
+    <div class="filter-card mb-4">
+      <div class="d-flex align-items-center justify-content-between mb-3">
+        <h5 class="mb-0">
+          <i class="bi bi-{{ isEdit ? 'pencil' : 'person-plus' }} me-2 text-primary"></i>
+          {{ isEdit ? 'Edit Employee' : 'Add New Employee' }}
+        </h5>
+        <button class="btn btn-secondary btn-sm" (click)="cancelForm()" id="cancel-form-btn">
+          <i class="bi bi-x-lg"></i> Cancel
+        </button>
+      </div>
+
+      <div class="row g-3">
+        <div class="col-md-3">
+          <label class="form-label">First Name *</label>
+          <input class="form-control" name="firstName" [(ngModel)]="employee.firstName" placeholder="First name" id="emp-firstname">
+        </div>
+        <div class="col-md-3">
+          <label class="form-label">Last Name *</label>
+          <input class="form-control" name="lastName" [(ngModel)]="employee.lastName" placeholder="Last name" id="emp-lastname">
+        </div>
+        <div class="col-md-3">
+          <label class="form-label">Email *</label>
+          <input type="email" class="form-control" name="email" [(ngModel)]="employee.email" placeholder="Email address" id="emp-email">
+        </div>
+        <div class="col-md-3">
+          <label class="form-label">Phone *</label>
+          <input class="form-control" name="phoneNumber" [(ngModel)]="employee.phoneNumber" placeholder="Phone number" id="emp-phone">
+        </div>
+        <div class="col-md-2">
+          <label class="form-label">Gender</label>
+          <select class="form-select" name="gender" [(ngModel)]="employee.gender" id="emp-gender">
+            <option value="M">Male</option>
+            <option value="F">Female</option>
+            <option value="O">Other</option>
+          </select>
+        </div>
+        <div class="col-md-3">
+          <label class="form-label">Date of Birth *</label>
+          <input type="date" class="form-control" name="dob" [(ngModel)]="employee.dob" id="emp-dob">
+        </div>
+        <div class="col-md-3">
+          <label class="form-label">Joining Date *</label>
+          <input type="date" class="form-control" name="doj" [(ngModel)]="employee.doj" id="emp-doj">
+        </div>
+        <div class="col-md-2">
+          <label class="form-label">Department</label>
+          <select class="form-select" name="departmentId" [(ngModel)]="employee.departmentId" id="emp-department">
+            @for (dept of departments; track dept.departmentId) {
+              <option [value]="dept.departmentId">{{ dept.departmentName }}</option>
+            }
+          </select>
+        </div>
+        <div class="col-md-2">
+          <label class="form-label">Role</label>
+          <select class="form-select" name="roleId" [(ngModel)]="employee.roleId" id="emp-roleid">
+            <option [value]="1">Admin</option>
+            <option [value]="2">Employee</option>
+            <option [value]="3">Manager</option>
+          </select>
+        </div>
+        <div class="col-md-2">
+          <label class="form-label">Status</label>
+          <select class="form-select" name="status" [(ngModel)]="employee.status" id="emp-status">
+            <option value="Active">Active</option>
+            <option value="Inactive">Inactive</option>
+          </select>
+        </div>
+        <div class="col-12 d-flex gap-2">
+          <button class="btn btn-primary" (click)="saveEmployee()" id="save-employee-btn">
+            <i class="bi bi-{{ isEdit ? 'check-circle' : 'person-plus' }}"></i>
+            {{ isEdit ? 'Update Employee' : 'Add Employee' }}
+          </button>
+          <button class="btn btn-secondary" (click)="cancelForm()">
+            <i class="bi bi-x-circle"></i> Cancel
+          </button>
+        </div>
+      </div>
+    </div>
+  }
+
+  <!-- Search Bar -->
+  <div class="filter-card">
+    <div class="row g-2 align-items-end">
+      <div class="col-md-6">
+        <label class="form-label">Search Employees</label>
+        <div class="input-group">
+          <span class="input-group-text bg-white border-end-0">
+            <i class="bi bi-search text-muted"></i>
+          </span>
+          <input
+            type="text"
+            class="form-control border-start-0"
+            placeholder="Search by name, email..."
+            [(ngModel)]="keyword"
+            (input)="search()"
+            id="search-employees">
+        </div>
+      </div>
+      <div class="col-md-auto">
+        <button class="btn btn-secondary" (click)="clearSearch()" id="clear-search-btn">
+          <i class="bi bi-x-circle"></i> Clear
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Table -->
+  <div class="table-card">
+    <div class="table-responsive">
+      <table class="table table-hover mb-0">
+        <thead>
+          <tr>
+            <th>#</th>
+            <th>Emp ID</th>
+            <th>Name</th>
+            <th>Email</th>
+            <th>Phone</th>
+            <th>Gender</th>
+            <th>DOB</th>
+            <th>Joining Date</th>
+            <th>Department</th>
+            <th>Role</th>
+            <th>Status</th>
+            <th class="text-center" style="width:130px;">Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          @if (employees.length === 0) {
+            <tr>
+              <td colspan="12" class="text-center py-5">
+                <div class="empty-state">
+                  <i class="bi bi-people d-block mb-2" style="font-size:2.5rem; color:#d1d5db;"></i>
+                  <p class="text-muted">No employees found</p>
+                </div>
+              </td>
+            </tr>
+          }
+          @for (e of employees; track e.employeeId; let i = $index) {
+            <tr>
+              <td class="fw-600 text-muted">{{ i + 1 }}</td>
+              <td class="fw-600 text-muted">#{{ e.employeeId }}</td>
+              <td>
+                <div class="d-flex align-items-center gap-2">
+                  <div class="emp-avatar">
+                    {{ (e.firstName?.[0] || '') + (e.lastName?.[0] || '') }}
+                  </div>
+                  <span class="fw-600">{{ e.firstName }} {{ e.lastName }}</span>
+                </div>
+              </td>
+              <td>{{ e.email }}</td>
+              <td>{{ e.phoneNumber }}</td>
+              <td>
+                <span class="badge" [class]="e.gender === 'M' ? 'badge-info' : (e.gender === 'F' ? 'badge-warning' : 'badge-secondary')">
+                  {{ e.gender === 'M' ? 'Male' : (e.gender === 'F' ? 'Female' : e.gender) }}
+                </span>
+              </td>
+              <td>{{ e.dob | date:'mediumDate' }}</td>
+              <td>{{ e.doj | date:'mediumDate' }}</td>
+              <td>{{ getDepartmentName(e.departmentId) }}</td>
+              <td>
+                <span class="badge badge-secondary">
+                  {{ getRoleName(e.roleId) }}
+                </span>
+              </td>
+              <td>
+                <span class="badge" [class]="e.status === 'Active' ? 'badge-success' : 'badge-danger'">
+                  {{ e.status }}
+                </span>
+              </td>
+              <td class="text-center">
+                <button class="btn btn-sm btn-warning me-1" (click)="editEmployee(e)" [id]="'edit-emp-' + e.employeeId">
+                  <i class="bi bi-pencil"></i>
+                </button>
+                <button class="btn btn-sm btn-danger" (click)="deleteEmployee(e.employeeId)" [id]="'del-emp-' + e.employeeId">
+                  <i class="bi bi-trash"></i>
+                </button>
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,85 @@
+/* My Team Layout & Card Styles */
+
+.team-card {
+  background: #ffffff;
+  border-radius: 16px;
+  border: 1px solid #e5e7eb;
+  padding: 1.5rem;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.01);
+  transition: all 0.3s ease;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+.team-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.05);
+  border-color: rgba(79, 70, 229, 0.2);
+}
+
+.team-avatar {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--primary, #4f46e5), #818cf8);
+  color: #ffffff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.1rem;
+  font-weight: 700;
+  box-shadow: 0 4px 10px rgba(79, 70, 229, 0.25);
+}
+
+.team-name {
+  font-size: 1.075rem;
+  font-weight: 700;
+  color: #1f2937;
+}
+
+.team-role {
+  font-weight: 600;
+}
+
+.team-info-section {
+  flex-grow: 1;
+}
+
+.team-info-item {
+  display: flex;
+  align-items: center;
+  font-size: 0.875rem;
+}
+
+.team-info-item i {
+  font-size: 1rem;
+}
+
+.team-projects-section h6 {
+  font-size: 0.725rem;
+  letter-spacing: 0.05em;
+}
+
+.italic {
+  font-style: italic;
+}
+
+.fw-600 {
+  font-weight: 600;
+}
+
+.fade-in {
+  animation: fadeIn 0.4s ease-out forwards;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}

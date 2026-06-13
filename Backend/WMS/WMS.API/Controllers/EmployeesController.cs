@@ -1,4 +1,4 @@
-﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using WMS.Domain.Entities;
 using WMS.Infrastructure.Data;
@@ -49,6 +49,16 @@ namespace WMS.API.Controllers
             _context.Employees.Add(employee);
             await _context.SaveChangesAsync();
 
+            // Automatically create corresponding UserLogin record
+            var userLogin = new UserLogin
+            {
+                Username = employee.Email,
+                PasswordHash = BCrypt.Net.BCrypt.HashPassword("Wms@123"), // Default password
+                RoleId = employee.RoleId
+            };
+            _context.UserLogins.Add(userLogin);
+            await _context.SaveChangesAsync();
+
             return Ok(employee);
         }
 
@@ -62,6 +72,8 @@ namespace WMS.API.Controllers
                 return NotFound("Employee not found");
             }
 
+            var oldEmail = existingEmployee.Email;
+
             existingEmployee.FirstName = employee.FirstName;
             existingEmployee.LastName = employee.LastName;
             existingEmployee.Email = employee.Email;
@@ -73,6 +85,14 @@ namespace WMS.API.Controllers
             existingEmployee.RoleId = employee.RoleId;
             existingEmployee.Status = employee.Status;
             existingEmployee.UpdatedOn = DateTime.Now;
+
+            // Sync UserLogin record
+            var userLogin = await _context.UserLogins.FirstOrDefaultAsync(u => u.Username == oldEmail);
+            if (userLogin != null)
+            {
+                userLogin.Username = employee.Email;
+                userLogin.RoleId = employee.RoleId;
+            }
 
             await _context.SaveChangesAsync();
 
@@ -87,6 +107,13 @@ namespace WMS.API.Controllers
             if (employee == null)
             {
                 return NotFound("Employee not found");
+            }
+
+            // Sync UserLogin record
+            var userLogin = await _context.UserLogins.FirstOrDefaultAsync(u => u.Username == employee.Email);
+            if (userLogin != null)
+            {
+                _context.UserLogins.Remove(userLogin);
             }
 
             _context.Employees.Remove(employee);

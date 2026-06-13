@@ -1,1 +1,249 @@
-<p>project-list works!</p>
+<app-navbar></app-navbar>
+<app-sidebar></app-sidebar>
+
+<div class="main-content fade-in">
+  <!-- Page Header -->
+  <div class="page-header section-header">
+    <div>
+      <h1 class="page-title">Project Management</h1>
+      <p class="page-subtitle">Manage projects and employee allocations</p>
+    </div>
+    @if (isAdmin()) {
+      <button class="btn btn-primary" (click)="toggleProjectForm()" id="add-project-btn">
+        <i class="bi bi-folder-plus"></i> Add Project
+      </button>
+    }
+  </div>
+
+  <!-- Add Project Form -->
+  @if (isAdmin() && showProjectForm) {
+      <div class="filter-card mb-4">
+        <div class="d-flex align-items-center justify-content-between mb-3">
+          <h5 class="mb-0">
+            <i class="bi bi-{{ isEditProject ? 'pencil' : 'folder-plus' }} me-2 text-primary"></i>
+            {{ isEditProject ? 'Edit Project' : 'Add New Project' }}
+          </h5>
+          <button class="btn btn-secondary btn-sm" (click)="toggleProjectForm()" id="cancel-project-btn">
+            <i class="bi bi-x-lg"></i> Cancel
+          </button>
+        </div>
+        <div class="row g-3">
+          <div class="col-md-3">
+            <label class="form-label">Project Name *</label>
+            <input class="form-control" placeholder="Project name" [(ngModel)]="project.projectName" id="proj-name">
+          </div>
+          <div class="col-md-2">
+            <label class="form-label">Client *</label>
+            <select class="form-select" [(ngModel)]="project.clientId" id="proj-client">
+              @for (c of clients; track c.clientId) {
+                <option [value]="c.clientId">{{ c.clientName }}</option>
+              }
+            </select>
+          </div>
+          <div class="col-md-2">
+            <label class="form-label">Start Date</label>
+            <input type="date" class="form-control" [(ngModel)]="project.startDate" id="proj-start">
+          </div>
+          <div class="col-md-2">
+            <label class="form-label">End Date</label>
+            <input type="date" class="form-control" [(ngModel)]="project.endDate" id="proj-end">
+          </div>
+          <div class="col-md-2">
+            <label class="form-label">Status</label>
+            <select class="form-select" [(ngModel)]="project.status" id="proj-status">
+              <option value="Active">Active</option>
+              <option value="OnHold">On Hold</option>
+              <option value="Completed">Completed</option>
+            </select>
+          </div>
+          <div class="col-md-1 d-flex align-items-end">
+            <button class="btn btn-primary w-100" (click)="addProject()" id="save-project-btn">
+              <i class="bi bi-{{ isEditProject ? 'check-circle' : 'plus-circle' }}"></i>
+            </button>
+          </div>
+        </div>
+      </div>
+  }
+
+  <!-- Assign Employee Form -->
+  @if (isAdmin() || isManager()) {
+    <div class="filter-card mb-4">
+      <h5 class="mb-3">
+        <i class="bi bi-person-plus me-2 text-primary"></i>
+        Assign Employee to Project
+      </h5>
+      <div class="row g-3">
+        <div class="col-md-3">
+          <label class="form-label">Employee *</label>
+          <select class="form-select" [(ngModel)]="allocation.employeeId" id="alloc-empid">
+            @for (e of assignableEmployees; track e.employeeId) {
+              <option [value]="e.employeeId">{{ e.firstName }} {{ e.lastName }} (ID: #{{ e.employeeId }})</option>
+            }
+          </select>
+        </div>
+        <div class="col-md-3">
+          <label class="form-label">Project</label>
+          <select class="form-select" [(ngModel)]="allocation.projectId" id="alloc-projectid">
+            @for (p of projects; track p.projectId) {
+              <option [value]="p.projectId">{{ p.projectName }}</option>
+            }
+          </select>
+        </div>
+        <div class="col-md-3">
+          <label class="form-label">Created By</label>
+          <select class="form-select" [(ngModel)]="allocation.createdBy" id="alloc-createdby" disabled>
+            <option [value]="allocation.createdBy">{{ allocation.createdBy }}</option>
+          </select>
+        </div>
+        <div class="col-md-3 d-flex align-items-end">
+          <button class="btn btn-success w-100" (click)="assignEmployee()" id="assign-emp-btn">
+            <i class="bi bi-person-check"></i> Assign Employee
+          </button>
+        </div>
+      </div>
+    </div>
+  }
+
+  <!-- Projects Table -->
+  <div class="table-card mb-4">
+    <div class="p-3 border-bottom d-flex align-items-center justify-content-between">
+      <h5 class="mb-0">
+        <i class="bi bi-folder2-open me-2 text-primary"></i>
+        Projects
+        <span class="badge badge-primary ms-2">{{ projects.length }}</span>
+      </h5>
+    </div>
+    <div class="table-responsive">
+      <table class="table table-hover mb-0">
+        <thead>
+          <tr>
+            <th>#</th>
+            <th>Project ID</th>
+            <th>Project Name</th>
+            <th>Client Name</th>
+            <th>Start Date</th>
+            <th>End Date</th>
+            <th>Status</th>
+            @if (isAdmin()) {
+              <th class="text-center" style="width:130px;">Actions</th>
+            }
+          </tr>
+        </thead>
+        <tbody>
+          @if (projects.length === 0) {
+            <tr>
+              <td [attr.colspan]="isAdmin() ? 8 : 7" class="text-center py-5">
+                <div class="empty-state">
+                  <i class="bi bi-folder d-block mb-2" style="font-size:2.5rem; color:#d1d5db;"></i>
+                  <p class="text-muted">No projects found. Add your first project.</p>
+                </div>
+              </td>
+            </tr>
+          }
+          @for (p of projects; track p.projectId; let i = $index) {
+            <tr>
+              <td class="fw-600 text-muted">{{ i + 1 }}</td>
+              <td class="fw-600 text-muted">#{{ p.projectId }}</td>
+              <td>
+                <div class="d-flex align-items-center gap-2">
+                  <div class="proj-icon">
+                    <i class="bi bi-folder-fill"></i>
+                  </div>
+                  <span class="fw-600">{{ p.projectName }}</span>
+                </div>
+              </td>
+              <td><span class="badge badge-secondary">{{ p.client?.clientName || 'Client #' + p.clientId }}</span></td>
+              <td>{{ p.startDate | date:'mediumDate' }}</td>
+              <td>{{ p.endDate | date:'mediumDate' }}</td>
+              <td>
+                <span class="badge" [class]="getProjectStatusBadge(p.status)">{{ p.status }}</span>
+              </td>
+              @if (isAdmin()) {
+                <td class="text-center">
+                  <button class="btn btn-sm btn-warning me-1" (click)="editProject(p)" [id]="'edit-proj-' + p.projectId">
+                    <i class="bi bi-pencil"></i>
+                  </button>
+                  <button class="btn btn-sm btn-danger" (click)="deleteProject(p.projectId)" [id]="'del-proj-' + p.projectId">
+                    <i class="bi bi-trash"></i>
+                  </button>
+                </td>
+              }
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- Allocations Table -->
+  <div class="table-card">
+    <div class="p-3 border-bottom">
+      <h5 class="mb-0">
+        <i class="bi bi-people me-2 text-primary"></i>
+        Project Allocations
+        <span class="badge badge-primary ms-2">{{ allocations.length }}</span>
+      </h5>
+    </div>
+    <div class="table-responsive">
+      <table class="table table-hover mb-0">
+        <thead>
+          <tr>
+            <th>#</th>
+            <th>Allocation ID</th>
+            <th>Employee</th>
+            <th>Project</th>
+            <th>Assigned On</th>
+            <th>Created By</th>
+            <th>Status</th>
+            @if (isAdmin() || isManager()) {
+              <th class="text-center" style="width:100px;">Actions</th>
+            }
+          </tr>
+        </thead>
+        <tbody>
+          @if (allocations.length === 0) {
+            <tr>
+              <td [attr.colspan]="(isAdmin() || isManager()) ? 8 : 7" class="text-center py-5">
+                <div class="empty-state">
+                  <i class="bi bi-people d-block mb-2" style="font-size:2.5rem; color:#d1d5db;"></i>
+                  <p class="text-muted">No allocations found.</p>
+                </div>
+              </td>
+            </tr>
+          }
+          @for (a of allocations; track a.allocationId; let i = $index) {
+            <tr>
+              <td class="fw-600 text-muted">{{ i + 1 }}</td>
+              <td class="fw-600 text-muted">#{{ a.allocationId }}</td>
+              <td>
+                <div class="d-flex align-items-center gap-2">
+                  <div class="emp-avatar-sm" style="width:28px; height:28px; border-radius:50%; background:var(--primary-light, #e0e7ff); color:var(--primary); display:flex; align-items:center; justify-content:center; font-size:0.75rem; font-weight:600;">
+                    {{ (a.employee?.firstName?.[0] || '') + (a.employee?.lastName?.[0] || '') }}
+                  </div>
+                  <span class="fw-600">{{ a.employee?.firstName }} {{ a.employee?.lastName }} <span class="text-muted small">(ID: #{{ a.employeeId }})</span></span>
+                </div>
+              </td>
+              <td><span class="badge badge-info">{{ a.project?.projectName || 'Project #' + a.projectId }}</span></td>
+              <td>{{ a.assignedOn | date:'mediumDate' }}</td>
+              <td>{{ a.createdBy }}</td>
+              <td>
+                <span class="badge" [class]="a.status ? 'badge-success' : 'badge-danger'">
+                  {{ a.status ? 'Active' : 'Inactive' }}
+                </span>
+              </td>
+              @if (isAdmin() || isManager()) {
+                <td class="text-center">
+                  @if (isAdmin() || (isManager() && a.employeeId !== userEmployeeId)) {
+                    <button class="btn btn-sm btn-danger" (click)="removeAllocation(a.allocationId)" [id]="'del-alloc-' + a.allocationId">
+                      <i class="bi bi-person-dash"></i>
+                    </button>
+                  }
+                </td>
+              }
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>

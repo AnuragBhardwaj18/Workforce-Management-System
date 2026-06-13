@@ -397,6 +397,9 @@ namespace WMS.Infrastructure.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("UserId"));
 
+                    b.Property<bool>("IsPasswordChanged")
+                        .HasColumnType("bit");
+
                     b.Property<DateTime?>("LastLogin")
                         .HasColumnType("datetime2");
 

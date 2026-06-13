@@ -23,23 +23,36 @@ namespace WMS.API.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> AddDepartment(Department department)
+        public async Task<IActionResult> AddDepartment([FromBody] DepartmentRequest request)
         {
+            if (request == null || string.IsNullOrWhiteSpace(request.departmentName))
+            {
+                return BadRequest("Department name is required");
+            }
+
+            var department = new Department
+            {
+                DepartmentName = request.departmentName,
+                Description = request.description,
+                CreatedOn = DateTime.Now
+            };
+
             _context.Departments.Add(department);
             await _context.SaveChangesAsync();
+
             return Ok(department);
         }
 
         [HttpPut("{id}")]
-        public async Task<IActionResult> UpdateDepartment(int id, Department department)
+        public async Task<IActionResult> UpdateDepartment(int id, [FromBody] DepartmentRequest request)
         {
             var existing = await _context.Departments.FindAsync(id);
 
             if (existing == null)
-                return NotFound();
+                return NotFound("Department not found");
 
-            existing.DepartmentName = department.DepartmentName;
-            existing.Description = department.Description;
+            existing.DepartmentName = request.departmentName;
+            existing.Description = request.description;
 
             await _context.SaveChangesAsync();
 
@@ -52,12 +65,18 @@ namespace WMS.API.Controllers
             var department = await _context.Departments.FindAsync(id);
 
             if (department == null)
-                return NotFound();
+                return NotFound("Department not found");
 
             _context.Departments.Remove(department);
             await _context.SaveChangesAsync();
 
             return Ok("Department deleted successfully");
         }
+    }
+
+    public class DepartmentRequest
+    {
+        public string departmentName { get; set; } = string.Empty;
+        public string? description { get; set; }
     }
 }

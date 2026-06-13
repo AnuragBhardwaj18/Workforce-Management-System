@@ -1,0 +1,100 @@
+<app-navbar></app-navbar>
+<app-sidebar></app-sidebar>
+
+<div class="main-content fade-in">
+  <!-- Page Header -->
+  <div class="page-header section-header">
+    <div>
+      <h1 class="page-title">My Team</h1>
+      <p class="page-subtitle">
+        @if (currentEmployee?.department) {
+          Members of the <strong>{{ currentEmployee.department.departmentName }}</strong> department
+        } @else {
+          All employees in the organization
+        }
+      </p>
+    </div>
+    <span class="badge badge-primary fs-6 py-2 px-3">
+      <i class="bi bi-people-fill me-1"></i> Teammates: {{ teammates.length }}
+    </span>
+  </div>
+
+  @if (errorMessage) {
+    <div class="alert alert-danger" role="alert">
+      <i class="bi bi-exclamation-triangle-fill me-2"></i> {{ errorMessage }}
+    </div>
+  }
+
+  @if (isLoading) {
+    <div class="text-center py-5">
+      <div class="spinner-border text-primary" role="status">
+        <span class="visually-hidden">Loading team members...</span>
+      </div>
+      <p class="text-muted mt-2">Loading team members...</p>
+    </div>
+  } @else {
+    @if (teammates.length === 0) {
+      <div class="text-center py-5 info-card">
+        <i class="bi bi-people d-block mb-3 text-muted" style="font-size: 3rem;"></i>
+        <h5>No teammates found</h5>
+        <p class="text-muted">You are currently the only employee registered in this department.</p>
+      </div>
+    } @else {
+      <!-- Teammates Grid -->
+      <div class="row g-4">
+        @for (e of teammates; track e.employeeId) {
+          <div class="col-md-6 col-lg-4">
+            <div class="team-card">
+              <!-- Card Header -->
+              <div class="d-flex align-items-start justify-content-between mb-3">
+                <div class="d-flex align-items-center gap-3">
+                  <div class="team-avatar">
+                    {{ getInitials(e.firstName, e.lastName) }}
+                  </div>
+                  <div>
+                    <h5 class="team-name mb-0">{{ e.firstName }} {{ e.lastName }}</h5>
+                    <span class="team-role text-muted small">{{ e.role?.roleName || 'Staff' }}</span>
+                  </div>
+                </div>
+                <span class="badge" [class]="e.status === 'Active' ? 'badge-success' : 'badge-danger'">
+                  {{ e.status }}
+                </span>
+              </div>
+
+              <!-- Contact Info -->
+              <div class="team-info-section mb-3 border-top pt-3">
+                <div class="team-info-item mb-2">
+                  <i class="bi bi-envelope text-primary me-2"></i>
+                  <span class="text-secondary text-truncate" title="{{ e.email }}">{{ e.email }}</span>
+                </div>
+                <div class="team-info-item">
+                  <i class="bi bi-telephone text-primary me-2"></i>
+                  <span class="text-secondary">{{ e.phoneNumber || 'Not provided' }}</span>
+                </div>
+              </div>
+
+              <!-- Project Allocations -->
+              <div class="team-projects-section mb-3 border-top pt-3">
+                <h6 class="text-uppercase small fw-600 text-muted mb-2">Assigned Projects</h6>
+                <div class="d-flex flex-wrap gap-1">
+                  @for (p of getTeammateProjects(e.employeeId); track p) {
+                    <span class="badge badge-info">{{ p }}</span>
+                  }
+                  @empty {
+                    <span class="text-muted small italic">No active projects</span>
+                  }
+                </div>
+              </div>
+
+              <!-- Joining Date -->
+              <div class="border-top pt-3 d-flex justify-content-between align-items-center text-muted small">
+                <span>Joined On</span>
+                <span>{{ e.doj | date:'mediumDate' }}</span>
+              </div>
+            </div>
+          </div>
+        }
+      </div>
+    }
+  }
+</div>

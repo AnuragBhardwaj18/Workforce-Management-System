@@ -1,0 +1,129 @@
+/* Profile Component Styles */
+
+.profile-card {
+  background: rgba(255, 255, 255, 0.7);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.4);
+  border-radius: 16px;
+  padding: 2.5rem 1.5rem;
+  box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.04);
+  transition: all 0.3s ease;
+}
+
+.profile-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 12px 40px 0 rgba(31, 38, 135, 0.08);
+}
+
+.profile-avatar-wrapper {
+  position: relative;
+  width: 110px;
+  height: 110px;
+  margin: 0 auto;
+}
+
+.profile-avatar-large {
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--primary, #4f46e5), #818cf8);
+  color: #ffffff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 2.25rem;
+  font-weight: 700;
+  box-shadow: 0 4px 15px rgba(79, 70, 229, 0.3);
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.status-indicator {
+  position: absolute;
+  bottom: 5px;
+  right: 5px;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  border: 3px solid #ffffff;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.15);
+}
+
+.status-active {
+  background-color: #10b981;
+}
+
+.status-inactive {
+  background-color: #ef4444;
+}
+
+.profile-name {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #1f2937;
+  margin-bottom: 0.25rem;
+}
+
+.profile-email {
+  font-size: 0.925rem;
+  word-break: break-all;
+}
+
+.info-card {
+  background: #ffffff;
+  border-radius: 16px;
+  border: 1px solid #e5e7eb;
+  padding: 2rem;
+  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.01);
+}
+
+.card-header-custom {
+  border-bottom: 1px solid #f3f4f6;
+  padding-bottom: 1.25rem;
+}
+
+.info-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 1.75rem;
+  margin-top: 1rem;
+}
+
+.info-item {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+}
+
+.info-label {
+  font-size: 0.825rem;
+  font-weight: 600;
+  color: #9ca3af;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.info-value {
+  font-size: 1.05rem;
+  font-weight: 600;
+  color: #374151;
+}
+
+.fw-600 {
+  font-weight: 600;
+}
+
+/* Animations */
+.fade-in {
+  animation: fadeIn 0.4s ease-out forwards;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}

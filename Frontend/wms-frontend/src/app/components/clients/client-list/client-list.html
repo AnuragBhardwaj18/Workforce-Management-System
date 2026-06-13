@@ -1,0 +1,140 @@
+<app-navbar></app-navbar>
+<app-sidebar></app-sidebar>
+
+<div class="main-content fade-in">
+  <!-- Page Header -->
+  <div class="page-header section-header">
+    <div>
+      <h1 class="page-title">Client Management</h1>
+      <p class="page-subtitle">Manage business client records and locations</p>
+    </div>
+    @if (isAdmin() || isManager()) {
+      <button class="btn btn-primary" (click)="openForm()" id="add-client-btn">
+        <i class="bi bi-building-add"></i> Add Client
+      </button>
+    }
+  </div>
+
+  <!-- Add/Edit Form -->
+  @if (showForm && (isAdmin() || isManager())) {
+    <div class="filter-card mb-4">
+      <div class="d-flex align-items-center justify-content-between mb-3">
+        <h5 class="mb-0">
+          <i class="bi bi-{{ isEdit ? 'pencil' : 'building-add' }} me-2 text-primary"></i>
+          {{ isEdit ? 'Edit Client' : 'Add New Client' }}
+        </h5>
+        <button class="btn btn-secondary btn-sm" (click)="cancelForm()" id="cancel-client-form-btn">
+          <i class="bi bi-x-lg"></i> Cancel
+        </button>
+      </div>
+
+      <div class="row g-3">
+        <div class="col-md-3">
+          <label class="form-label">Client Name *</label>
+          <input class="form-control" name="clientName" [(ngModel)]="client.clientName" placeholder="Client name" id="client-name-input">
+        </div>
+        <div class="col-md-3">
+          <label class="form-label">Phone Number</label>
+          <input class="form-control" name="clientPhoneNumber" [(ngModel)]="client.clientPhoneNumber" placeholder="Phone number" id="client-phone-input">
+        </div>
+        <div class="col-md-3">
+          <label class="form-label">Location</label>
+          <input class="form-control" name="clientLocation" [(ngModel)]="client.clientLocation" placeholder="e.g. New York" id="client-location-input">
+        </div>
+        <div class="col-md-3">
+          <label class="form-label">Status</label>
+          <select class="form-select" name="status" [(ngModel)]="client.status" id="client-status-input">
+            <option [ngValue]="true">Active</option>
+            <option [ngValue]="false">Inactive</option>
+          </select>
+        </div>
+        <div class="col-md-12">
+          <label class="form-label">Address</label>
+          <textarea class="form-control" rows="2" name="clientAddress" [(ngModel)]="client.clientAddress" placeholder="Full business address" id="client-address-input"></textarea>
+        </div>
+        <div class="col-12 d-flex gap-2">
+          <button class="btn btn-primary" (click)="saveClient()" id="save-client-btn">
+            <i class="bi bi-{{ isEdit ? 'check-circle' : 'plus-circle' }}"></i>
+            {{ isEdit ? 'Update Client' : 'Add Client' }}
+          </button>
+          <button class="btn btn-secondary" (click)="cancelForm()">
+            <i class="bi bi-x-circle"></i> Cancel
+          </button>
+        </div>
+      </div>
+    </div>
+  }
+
+  <!-- Table -->
+  <div class="table-card">
+    <div class="p-3 border-bottom">
+      <h5 class="mb-0">
+        <i class="bi bi-briefcase me-2 text-primary"></i>
+        All Clients
+        <span class="badge badge-primary ms-2">{{ clients.length }}</span>
+      </h5>
+    </div>
+    <div class="table-responsive">
+      <table class="table table-hover mb-0">
+        <thead>
+          <tr>
+            <th>#</th>
+            <th>Client ID</th>
+            <th>Client Name</th>
+            <th>Phone</th>
+            <th>Location</th>
+            <th>Address</th>
+            <th>Status</th>
+            @if (isAdmin() || isManager()) {
+              <th class="text-center" style="width:130px;">Actions</th>
+            }
+          </tr>
+        </thead>
+        <tbody>
+          @if (clients.length === 0) {
+            <tr>
+              <td [attr.colspan]="isAdmin() || isManager() ? 8 : 7" class="text-center py-5">
+                <div class="empty-state">
+                  <i class="bi bi-briefcase d-block mb-2" style="font-size:2.5rem; color:#d1d5db;"></i>
+                  <p class="text-muted">No clients found</p>
+                </div>
+              </td>
+            </tr>
+          }
+          @for (c of clients; track c.clientId; let i = $index) {
+            <tr>
+              <td class="fw-600 text-muted">{{ i + 1 }}</td>
+              <td class="fw-600 text-muted">#{{ c.clientId }}</td>
+              <td>
+                <div class="d-flex align-items-center gap-2">
+                  <div class="client-avatar">
+                    <i class="bi bi-briefcase-fill"></i>
+                  </div>
+                  <span class="fw-600">{{ c.clientName }}</span>
+                </div>
+              </td>
+              <td>{{ c.clientPhoneNumber || '—' }}</td>
+              <td>{{ c.clientLocation || '—' }}</td>
+              <td class="text-muted">{{ c.clientAddress || '—' }}</td>
+              <td>
+                <span class="badge" [class]="c.status ? 'badge-success' : 'badge-danger'">
+                  {{ c.status ? 'Active' : 'Inactive' }}
+                </span>
+              </td>
+              @if (isAdmin() || isManager()) {
+                <td class="text-center">
+                  <button class="btn btn-sm btn-warning me-1" (click)="editClient(c)" [id]="'edit-client-' + c.clientId">
+                    <i class="bi bi-pencil"></i>
+                  </button>
+                  <button class="btn btn-sm btn-danger" (click)="deleteClient(c.clientId)" [id]="'del-client-' + c.clientId">
+                    <i class="bi bi-trash"></i>
+                  </button>
+                </td>
+              }
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>

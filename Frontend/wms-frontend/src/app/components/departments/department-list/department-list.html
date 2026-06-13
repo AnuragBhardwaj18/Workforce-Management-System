@@ -1,1 +1,103 @@
-<p>department-list works!</p>
+<app-navbar></app-navbar>
+<app-sidebar></app-sidebar>
+
+<div class="main-content fade-in">
+  <!-- Page Header -->
+  <div class="page-header section-header">
+    <div>
+      <h1 class="page-title">Department Management</h1>
+      <p class="page-subtitle">Manage your organization's departments</p>
+    </div>
+    <button class="btn btn-primary" (click)="openForm()" id="add-dept-btn">
+      <i class="bi bi-building-add"></i> Add Department
+    </button>
+  </div>
+
+  <!-- Add/Edit Form -->
+  @if (showForm) {
+    <div class="filter-card mb-4">
+      <div class="d-flex align-items-center justify-content-between mb-3">
+        <h5 class="mb-0">
+          <i class="bi bi-{{ isEdit ? 'pencil' : 'building-add' }} me-2 text-primary"></i>
+          {{ isEdit ? 'Edit Department' : 'Add New Department' }}
+        </h5>
+        <button class="btn btn-secondary btn-sm" (click)="cancelForm()" id="cancel-dept-btn">
+          <i class="bi bi-x-lg"></i> Cancel
+        </button>
+      </div>
+      <div class="row g-3">
+        <div class="col-md-4">
+          <label class="form-label">Department Name *</label>
+          <input class="form-control" placeholder="e.g. Engineering" name="departmentName" [(ngModel)]="department.departmentName" id="dept-name">
+        </div>
+        <div class="col-md-6">
+          <label class="form-label">Description</label>
+          <input class="form-control" placeholder="Brief description of the department" name="description" [(ngModel)]="department.description" id="dept-desc">
+        </div>
+        <div class="col-md-2 d-flex align-items-end">
+          <button class="btn btn-primary w-100" (click)="saveDepartment()" id="save-dept-btn">
+            <i class="bi bi-{{ isEdit ? 'check-circle' : 'plus-circle' }}"></i>
+            {{ isEdit ? 'Update' : 'Add' }}
+          </button>
+        </div>
+      </div>
+    </div>
+  }
+
+  <!-- Table -->
+  <div class="table-card">
+    <div class="p-3 border-bottom">
+      <h5 class="mb-0">
+        <i class="bi bi-list-ul me-2 text-primary"></i>
+        All Departments
+        <span class="badge badge-primary ms-2">{{ departments.length }}</span>
+      </h5>
+    </div>
+    <div class="table-responsive">
+      <table class="table table-hover mb-0">
+        <thead>
+          <tr>
+            <th>#</th>
+            <th>Department Name</th>
+            <th>Description</th>
+            <th class="text-center" style="width:150px;">Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          @if (departments.length === 0) {
+            <tr>
+              <td colspan="4" class="text-center py-5">
+                <div class="empty-state">
+                  <i class="bi bi-building d-block mb-2" style="font-size:2.5rem; color:#d1d5db;"></i>
+                  <p class="text-muted">No departments found. Add your first department.</p>
+                </div>
+              </td>
+            </tr>
+          }
+          @for (d of departments; track d.departmentId; let i = $index) {
+            <tr>
+              <td class="fw-600 text-muted">{{ i + 1 }}</td>
+              <td>
+                <div class="d-flex align-items-center gap-2">
+                  <div class="dept-icon">
+                    <i class="bi bi-building"></i>
+                  </div>
+                  <span class="fw-600">{{ d.departmentName }}</span>
+                </div>
+              </td>
+              <td class="text-muted">{{ d.description || '—' }}</td>
+              <td class="text-center">
+                <button class="btn btn-sm btn-warning me-1" (click)="editDepartment(d)" [id]="'edit-dept-' + d.departmentId">
+                  <i class="bi bi-pencil"></i>
+                </button>
+                <button class="btn btn-sm btn-danger" (click)="deleteDepartment(d.departmentId)" [id]="'del-dept-' + d.departmentId">
+                  <i class="bi bi-trash"></i>
+                </button>
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>

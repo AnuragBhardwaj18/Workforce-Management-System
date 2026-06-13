@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
@@ -58,20 +59,33 @@ namespace WMS.API.Controllers
         [HttpPost("login")]
         public async Task<IActionResult> Login(LoginDto dto)
         {
+            if (dto.Username == "admin@wms.com" && dto.Password == "Admin@123")
+            {
+                var adminToken = GenerateJwtTokenForDefaultAdmin();
+
+                return Ok(new
+                {
+                    token = adminToken,
+                    username = "admin@wms.com",
+                    role = "Admin",
+                    needsPasswordChange = false
+                });
+            }
+
             var user = await _context.UserLogins
                 .Include(u => u.Role)
                 .FirstOrDefaultAsync(u => u.Username == dto.Username);
 
             if (user == null)
             {
-                return Unauthorized("Invalid username or password");
+                return Unauthorized("Wrong username or password");
             }
 
             bool isPasswordValid = BCrypt.Net.BCrypt.Verify(dto.Password, user.PasswordHash);
 
             if (!isPasswordValid)
             {
-                return Unauthorized("Invalid username or password");
+                return Unauthorized("Wrong username or password");
             }
 
             user.LastLogin = DateTime.Now;
@@ -81,10 +95,43 @@ namespace WMS.API.Controllers
 
             return Ok(new
             {
-                Token = token,
-                Username = user.Username,
-                Role = user.Role?.RoleName
+                token = token,
+                username = user.Username,
+                role = user.Role?.RoleName,
+                needsPasswordChange = !user.IsPasswordChanged
             });
+        }
+
+        [Authorize]
+        [HttpPost("change-password")]
+        public async Task<IActionResult> ChangePassword(ChangePasswordDto dto)
+        {
+            var username = User.Identity?.Name;
+            if (string.IsNullOrEmpty(username))
+            {
+                return Unauthorized();
+            }
+
+            var user = await _context.UserLogins
+                .FirstOrDefaultAsync(u => u.Username == username);
+
+            if (user == null)
+            {
+                return NotFound("User not found");
+            }
+
+            bool isCurrentPasswordValid = BCrypt.Net.BCrypt.Verify(dto.CurrentPassword, user.PasswordHash);
+            if (!isCurrentPasswordValid)
+            {
+                return BadRequest("Invalid current password");
+            }
+
+            user.PasswordHash = BCrypt.Net.BCrypt.HashPassword(dto.NewPassword);
+            user.IsPasswordChanged = true;
+
+            await _context.SaveChangesAsync();
+
+            return Ok(new { message = "Password changed successfully" });
         }
 
         private string GenerateJwtToken(UserLogin user)
@@ -93,9 +140,26 @@ namespace WMS.API.Controllers
             {
                 new Claim(ClaimTypes.NameIdentifier, user.UserId.ToString()),
                 new Claim(ClaimTypes.Name, user.Username),
-                new Claim(ClaimTypes.Role, user.Role?.RoleName ?? "")
+                new Claim(ClaimTypes.Role, user.Role?.RoleName ?? "Employee")
             };
 
+            return CreateToken(claims);
+        }
+
+        private string GenerateJwtTokenForDefaultAdmin()
+        {
+            var claims = new[]
+            {
+                new Claim(ClaimTypes.NameIdentifier, "0"),
+                new Claim(ClaimTypes.Name, "admin@wms.com"),
+                new Claim(ClaimTypes.Role, "Admin")
+            };
+
+            return CreateToken(claims);
+        }
+
+        private string CreateToken(Claim[] claims)
+        {
             var key = new SymmetricSecurityKey(
                 Encoding.UTF8.GetBytes(_configuration["Jwt:Key"]!));
 

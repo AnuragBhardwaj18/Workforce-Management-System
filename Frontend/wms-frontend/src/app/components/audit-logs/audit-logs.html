@@ -1,0 +1,111 @@
+<app-navbar></app-navbar>
+<app-sidebar></app-sidebar>
+
+<div class="main-content fade-in">
+  <!-- Page Header -->
+  <div class="page-header section-header">
+    <div>
+      <h1 class="page-title">System Audit Logs</h1>
+      <p class="page-subtitle">Track database actions, record changes, and user operations</p>
+    </div>
+    <span class="badge badge-primary fs-6 py-2 px-3">
+      <i class="bi bi-shield-lock-fill me-1"></i> Total Events: {{ filteredLogs.length }}
+    </span>
+  </div>
+
+  <!-- Filters Panel -->
+  <div class="filter-card mb-4">
+    <div class="row g-3">
+      <div class="col-md-5">
+        <label class="form-label">Search Keyword</label>
+        <div class="input-group">
+          <span class="input-group-text bg-white border-end-0"><i class="bi bi-search text-muted"></i></span>
+          <input type="text" class="form-control border-start-0 ps-0" placeholder="Search by action, record ID, or user..." [(ngModel)]="keyword" (ngModelChange)="applyFilters()" id="audit-search">
+        </div>
+      </div>
+      <div class="col-md-3">
+        <label class="form-label">Filter by Entity</label>
+        <select class="form-select" [(ngModel)]="selectedEntity" (change)="applyFilters()" id="audit-entity-filter">
+          <option value="">All Entities</option>
+          @for (entity of entities; track entity) {
+            <option [value]="entity">{{ entity }}</option>
+          }
+        </select>
+      </div>
+      <div class="col-md-4 d-flex align-items-end gap-2">
+        <button class="btn btn-primary flex-grow-1" (click)="applyFilters()" id="btn-apply-filters">
+          <i class="bi bi-funnel"></i> Filter
+        </button>
+        <button class="btn btn-secondary" (click)="clearFilters()" id="btn-clear-filters">
+          <i class="bi bi-x-circle"></i> Clear
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Logs Table -->
+  <div class="table-card">
+    <div class="p-3 border-bottom d-flex align-items-center justify-content-between">
+      <h5 class="mb-0">
+        <i class="bi bi-activity me-2 text-primary"></i>
+        Audit History
+      </h5>
+      <button class="btn btn-outline-primary btn-sm" (click)="loadAuditLogs()" id="refresh-audit-btn">
+        <i class="bi bi-arrow-clockwise"></i> Refresh
+      </button>
+    </div>
+    <div class="table-responsive">
+      <table class="table table-hover mb-0">
+        <thead>
+          <tr>
+            <th>#</th>
+            <th>Log ID</th>
+            <th>Entity Name</th>
+            <th>Record ID</th>
+            <th>Action performed</th>
+            <th>Done By</th>
+            <th>Timestamp</th>
+          </tr>
+        </thead>
+        <tbody>
+          @if (filteredLogs.length === 0) {
+            <tr>
+              <td colspan="7" class="text-center py-5">
+                <div class="empty-state">
+                  <i class="bi bi-database-exclamation d-block mb-2" style="font-size:2.5rem; color:#d1d5db;"></i>
+                  <p class="text-muted">No audit logs match the filters</p>
+                </div>
+              </td>
+            </tr>
+          }
+          @for (log of filteredLogs; track log.auditId; let i = $index) {
+            <tr>
+              <td class="fw-600 text-muted">{{ i + 1 }}</td>
+              <td class="fw-600 text-muted">#{{ log.auditId }}</td>
+              <td>
+                <span class="badge badge-info">{{ log.EntityName || log.entityName }}</span>
+              </td>
+              <td>
+                <span class="badge badge-secondary">Record #{{ log.RecordId || log.recordId }}</span>
+              </td>
+              <td>
+                <span class="badge" [class]="log.Action === 'Insert' || log.action === 'Insert' ? 'badge-success' : (log.Action === 'Delete' || log.action === 'Delete' ? 'badge-danger' : 'badge-warning')">
+                  {{ log.Action || log.action }}
+                </span>
+              </td>
+              <td>
+                <div class="d-flex align-items-center gap-2">
+                  <div class="emp-avatar-sm" style="width:24px; height:24px; border-radius:50%; background:var(--primary-light, #e0e7ff); color:var(--primary); display:flex; align-items:center; justify-content:center; font-size:0.7rem; font-weight:600;">
+                    {{ getEmployeeName(log.CreatedBy || log.createdBy).substring(0, 2).toUpperCase() }}
+                  </div>
+                  <span class="fw-500">{{ getEmployeeName(log.CreatedBy || log.createdBy) }}</span>
+                </div>
+              </td>
+              <td>{{ (log.CreatedOn || log.createdOn) | date:'medium' }}</td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>

@@ -1,1 +1,120 @@
-<p>report-list works!</p>
+<app-navbar></app-navbar>
+<app-sidebar></app-sidebar>
+
+<div class="main-content fade-in">
+  <!-- Page Header -->
+  <div class="page-header">
+    <h1 class="page-title">Reports</h1>
+    <p class="page-subtitle">Generate and view workforce analytics reports</p>
+  </div>
+
+  <!-- Report Buttons -->
+  <div class="row g-3 mb-4">
+    <div class="col-md-4">
+      <button
+        class="report-card"
+        [class.active]="selectedReport === 'Employee Report'"
+        (click)="loadEmployeeReport()"
+        id="employee-report-btn">
+        <div class="report-icon indigo">
+          <i class="bi bi-people-fill"></i>
+        </div>
+        <div class="report-info">
+          <h6>Employee Report</h6>
+          <p>Complete employee directory with details</p>
+        </div>
+        <i class="bi bi-arrow-right-circle report-arrow"></i>
+      </button>
+    </div>
+
+    <div class="col-md-4">
+      <button
+        class="report-card"
+        [class.active]="selectedReport === 'Leave Report'"
+        (click)="loadLeaveReport()"
+        id="leave-report-btn">
+        <div class="report-icon amber">
+          <i class="bi bi-calendar2-check-fill"></i>
+        </div>
+        <div class="report-info">
+          <h6>Leave Report</h6>
+          <p>Leave requests and approval status</p>
+        </div>
+        <i class="bi bi-arrow-right-circle report-arrow"></i>
+      </button>
+    </div>
+
+    <div class="col-md-4">
+      <button
+        class="report-card"
+        [class.active]="selectedReport === 'Project Allocation Report'"
+        (click)="loadProjectReport()"
+        id="project-report-btn">
+        <div class="report-icon green">
+          <i class="bi bi-kanban-fill"></i>
+        </div>
+        <div class="report-info">
+          <h6>Project Allocation Report</h6>
+          <p>Employee to project assignments</p>
+        </div>
+        <i class="bi bi-arrow-right-circle report-arrow"></i>
+      </button>
+    </div>
+  </div>
+
+  <!-- Report Data -->
+  @if (selectedReport) {
+    <div class="table-card">
+      <div class="p-3 border-bottom d-flex align-items-center justify-content-between">
+        <h5 class="mb-0">
+          <i class="bi bi-table me-2 text-primary"></i>
+          {{ selectedReport }}
+        </h5>
+        <div class="d-flex align-items-center gap-2">
+          <button class="btn btn-sm btn-success" (click)="downloadExcel()" id="download-report-btn">
+            <i class="bi bi-file-earmark-excel"></i> Download Excel
+          </button>
+          <span class="badge badge-primary">{{ reportData.length }} records</span>
+        </div>
+      </div>
+
+      @if (reportData.length === 0) {
+        <div class="text-center py-5">
+          <div class="empty-state">
+            <i class="bi bi-graph-up d-block mb-2" style="font-size:2.5rem; color:#d1d5db;"></i>
+            <p class="text-muted">No data available for this report</p>
+          </div>
+        </div>
+      } @else {
+        <div class="table-responsive">
+          <table class="table table-hover mb-0">
+            <thead>
+              <tr>
+                @for (key of getKeys(reportData[0]); track key) {
+                  <th>{{ formatHeader(key) }}</th>
+                }
+              </tr>
+            </thead>
+            <tbody>
+              @for (row of reportData; track $index) {
+                <tr>
+                  @for (key of getKeys(row); track key) {
+                    <td>{{ row[key] }}</td>
+                  }
+                </tr>
+              }
+            </tbody>
+          </table>
+        </div>
+      }
+    </div>
+  } @else {
+    <div class="text-center py-5">
+      <div class="empty-state">
+        <i class="bi bi-graph-up-arrow d-block mb-3" style="font-size:3rem; color:#d1d5db;"></i>
+        <h5 class="text-muted">Select a report to view data</h5>
+        <p class="text-muted">Click any report card above to generate the report</p>
+      </div>
+    </div>
+  }
+</div>
