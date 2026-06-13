@@ -142,10 +142,17 @@ namespace WMS.API.Controllers
                 var pending = await _context.Database.GetPendingMigrationsAsync();
                 var applied = await _context.Database.GetAppliedMigrationsAsync();
                 
+                var rolesCount = await _context.Roles.CountAsync();
+                var departmentsCount = await _context.Departments.CountAsync();
+                var employeesCount = await _context.Employees.CountAsync();
+                
                 return Ok(new {
                     message = "Connected to DB successfully!",
                     pendingMigrations = pending,
-                    appliedMigrations = applied
+                    appliedMigrations = applied,
+                    rolesCount = rolesCount,
+                    departmentsCount = departmentsCount,
+                    employeesCount = employeesCount
                 });
             }
             catch (Exception ex)
