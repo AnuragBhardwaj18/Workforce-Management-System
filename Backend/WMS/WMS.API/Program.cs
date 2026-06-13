@@ -62,11 +62,10 @@ builder.Services.AddCors(options =>
 var app = builder.Build();
 
 // Swagger
-if (app.Environment.IsDevelopment())
-{
+
     app.UseSwagger();
     app.UseSwaggerUI();
-}
+
 
 // Global Exception Middleware
 app.UseMiddleware<ExceptionMiddleware>();
